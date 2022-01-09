@@ -1,0 +1,33 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: us
+  ssh:
+    install-server: true
+    allow-pw: true
+  packages:
+    - qemu-guest-agent
+    - net-tools
+    - build-essential
+    - nfs-common
+    - fping
+    - ioping
+  storage:
+    layout:
+      name: lvm
+    swap:
+      size: 0
+  user-data:
+    package_upgrade: true
+    timezone: America/Toronto
+    users:
+      - name: admusr
+        passwd: my-strong-password2
+        groups: [adm, cdrom, dip, plugdev, lxd, sudo]
+        lock-passwd: false
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+        ssh_authorized_keys:
+          - ssh-rsa my-rsa-key

@@ -1,0 +1,16 @@
+# Local .terraform directories
+**/.terraform/*
+crash.log
+
+# proxmox template
+templates/pve_userdata_*
+
+# Secrets
+terraform_password
+keyfile.json
+
+# git secret
+.gitsecret/keys/pubring.kbx~
+.gitsecret/keys/random_seed
+!*.secret
+secrets/gcp/keyfile.json

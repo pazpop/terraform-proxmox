@@ -1,0 +1,82 @@
+{
+  "variables": {
+    "pve_username": "",
+    "pve_password": "",
+    "pve_url": "",
+    "pve_node": ""
+  },
+  "sensitive-variables": ["password", "ssh_password" ],
+  "builders": [
+    {
+      "type": "proxmox-iso",
+      "proxmox_url": "{{ user `pve_url`}}",
+      "insecure_skip_tls_verify": true,
+      "username": "{{user `pve_username`}}",
+      "password": "{{user `pve_password`}}",
+
+      "node": "{{user `pve_node`}}",
+      "pool": "pool0",
+
+      "vm_name": "packer-centos7",
+      "vm_id": 9000,
+      "memory": 4096,
+      "sockets": 1,
+      "cores": 4,
+      "cpu_type": "host",
+      "os": "l26",
+      "cloud_init": true,
+      "cloud_init_storage_pool": "local-lvm",
+      "qemu_agent": true,
+      "disable_kvm": false,
+      "boot": "order=scsi0;ide2",
+      "onboot": false,
+
+      "network_adapters": [
+        {
+          "model": "virtio",
+          "bridge": "vmbr0",
+          "firewall": false
+        }
+      ],
+
+      "scsi_controller": "virtio-scsi-single",
+      "disks": [
+        {
+          "type": "scsi",
+          "disk_size": "10G",
+          "storage_pool": "local-lvm",
+          "storage_pool_type": "lvm",
+          "format": "raw"
+        }
+      ],
+
+      "iso_file": "local:iso/CentOS-7-x86_64-DVD-2009.iso",
+      "http_directory": "centos7",
+      "boot_wait": "10s",
+      "boot_command": [
+        "<tab> ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+      ],
+
+      "ssh_username": "root",
+      "ssh_timeout": "30m",
+      "ssh_password": "my-strong-password",
+
+      "unmount_iso": true,
+      "template_name": "centos-7-template",
+      "template_description": "CentOS 7 Template, generated on {{ isotime \"2006-01-02T15:04:05Z\" }}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "centos7/init.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Path }}"
+    },
+    {
+      "type": "file",
+      "direction": "upload",
+      "source": "cloud-init",
+      "destination": "/etc/cloud"
+    }
+  ]
+}

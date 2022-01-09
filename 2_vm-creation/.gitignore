@@ -1,0 +1,6 @@
+# Local .terraform directories
+**/.terraform/*
+crash.log
+
+# proxmox template
+templates/pve_userdata_*
